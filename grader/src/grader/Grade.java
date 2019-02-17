@@ -10,15 +10,17 @@ public class Grade {
 	LinkedHashMap<String, Integer> references; 
 	int points; 
 	
-	Grade(Assignment a, Storage s, String username) {
+	Grade(Assignment a, Storage s) {
 		this.console = new Scanner(System.in); 
-		this.username = username; 
+		System.out.print("Enter username: ");
+		this.username = console.next(); 
+		console.nextLine(); 
 		this.references = new LinkedHashMap<String, Integer>(); 
 		this.points = a.getTotal(); 
-		enterGrades(a, s); 
+		grade(a, s); 
 	}
 	
-	public void enterGrades(Assignment a, Storage s) {
+	public void grade(Assignment a, Storage s) {
 		s.printAllComments();
 		for (Map.Entry<String, Integer> entry : a.questions.entrySet()) {
 			// prints question to jog grader memory 

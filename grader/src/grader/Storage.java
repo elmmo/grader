@@ -21,6 +21,13 @@ public class Storage {
 		int index = 0; 
 	}
 	
+	public void enterGrades(Assignment a) {
+		for (int i = 0; i < grades.length; i++) {
+			grades[i] = new Grade(a, this);
+		}
+		generateOutput(); 
+	}
+	
 	public void generateOutput() { 
 		for (int i = 0; i < grades.length; i++) {
 			try { 
