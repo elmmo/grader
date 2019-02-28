@@ -10,38 +10,41 @@ import java.util.Map;
 
 
 public class Storage {
-	final int CLASS_SIZE = 17; 
+	final int CLASS_SIZE = 16; 
 	Grade[] grades; 
 	HashMap<Integer, String> comments; 
 	int index; 
+	String assignmentTitle; 
+	int assignmentTotal; 
 	
 	Storage() { 
 		grades = new Grade[CLASS_SIZE]; 
 		comments = new HashMap<Integer, String>(); 
-		int index = 0; 
 	}
 	
-	public void enterGrades(Assignment a) {
+	public void enterGrades(Assignment a, Console c) {
+		assignmentTotal = a.getTotalPoints(); 
+		assignmentTitle = a.getTitle();
 		for (int i = 0; i < grades.length; i++) {
-			grades[i] = new Grade(a, this);
+			grades[i] = new Grade(a, this, c);
+			generateOutput(i); 
 		}
-		generateOutput(); 
 	}
 	
-	public void generateOutput() { 
-		for (int i = 0; i < grades.length; i++) {
-			try { 
-				PrintWriter writer = new PrintWriter("../../" + grades[i].getUsername(), "UTF-8"); 
-				writer.println(getDate());
-				writer.println("Graded by Eli Min"); 
-				LinkedHashMap<String, Integer> map = grades[i].getReferences(); 
-				for (String key : map.keySet()) { 
-					writer.println(key + " | " + comments.get(map.get(key))); 
-				}
-				writer.close(); 
-			} catch (Exception e) {
-				e.printStackTrace();
+	public void generateOutput(int student) { 
+		try { 
+			PrintWriter writer = new PrintWriter("../../Grades/" + assignmentTitle + "-" + grades[student].getUsername(), "UTF-8"); 
+			writer.println(getDate());
+			writer.println("Graded by Eli Min"); 
+			LinkedHashMap<String, Integer> map = grades[student].getReferences(); 
+			for (String key : map.keySet()) { 
+				writer.println(key + " | " + comments.get(map.get(key)) + "\n");
 			}
+			writer.println("\n" + grades[student].getPoints() + "/" + assignmentTotal); 
+			writer.close(); 
+			System.out.println("Grade for " + grades[student].getUsername() + " successfully generated.");
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

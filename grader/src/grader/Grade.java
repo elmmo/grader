@@ -2,21 +2,18 @@ package grader;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Scanner; 
 
 public class Grade {
 	String username; 
-	Scanner console; 
+	Console console; 
 	LinkedHashMap<String, Integer> references; 
 	int points; 
 	
-	Grade(Assignment a, Storage s) {
-		this.console = new Scanner(System.in); 
-		System.out.print("Enter username: ");
-		this.username = console.next(); 
-		console.nextLine(); 
+	Grade(Assignment a, Storage s, Console c) {
+		this.console = c; 
+		this.username = console.getStrAnswer("Enter username:"); 
 		this.references = new LinkedHashMap<String, Integer>(); 
-		this.points = a.getTotal(); 
+		this.points = a.getTotalPoints(); 
 		grade(a, s); 
 	}
 	
@@ -24,26 +21,27 @@ public class Grade {
 		s.printAllComments();
 		for (Map.Entry<String, Integer> entry : a.questions.entrySet()) {
 			// prints question to jog grader memory 
-			System.out.println(entry.getKey() + " | " + entry.getValue());
+			System.out.println(entry.getKey() + " | " + entry.getValue() + " points");
 			
 			// lines for this problem, individual to the student 
-			System.out.print("What lines does this problem concern? ");
-			String lines = console.nextLine(); 
-			
-			// grading 
-			System.out.print("How many points do you deduct?");
-			String deduction = console.nextLine(); 
-			if (deduction.contains("Use comment ")) {
-				references.put(lines, Integer.parseInt(deduction.split("#")[1])); 
-			} else { 
-				points -= Integer.parseInt(deduction); 
-				console.nextLine(); 
-				System.out.println("Comments?");
-				String comments = "-" + deduction + " | " + console.nextLine(); 
-				int referenceInt = s.addComment(comments);
-				
-				// adds to the memory for this grade 
-				references.put(lines, referenceInt); 
+			String lines = console.getStrAnswer("What lines does this problem concern?"); 
+			if (!(lines.equals("none"))) { 
+				// grading 
+				String deduction = console.getStrAnswer("How many points do you deduct?"); 
+				if (deduction.contains("Use comment ")) {
+					references.put(lines, Integer.parseInt(deduction.split("#")[1])); 
+				} else { 
+					String comments = console.getStrAnswer("Comments?"); 
+					// in the case that any points are deducted
+					if (!deduction.equals("0") && !deduction.equals("-")) {
+						points -= Integer.parseInt(deduction); 
+						comments = "-" + deduction + " | " + comments; 
+					}
+					int referenceInt = s.addComment(comments);
+					
+					// adds to the memory for this grade 
+					references.put(lines, referenceInt); 
+				}
 			}
 		}
 	}
@@ -54,5 +52,9 @@ public class Grade {
 	
 	public LinkedHashMap getReferences() {
 		return references; 
+	}
+	
+	public int getPoints() {
+		return points; 
 	}
 }

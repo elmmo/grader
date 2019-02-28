@@ -1,72 +1,86 @@
 package grader;
-
-import java.util.Scanner; 
+ 
 import java.util.LinkedHashMap;
 import java.util.Map; 
 
 public class Assignment {
-	Scanner console; 
-	int total; 
-	int numOfQuestions; 
+	Console console; 
+	String title; 
+	int totalPoints; 
 	protected LinkedHashMap<String, Integer> questions; 
 	
-	Assignment(Scanner console) { 
+	Assignment(Console console) { 
 		this.console = console; 
 		this.questions = new LinkedHashMap<String, Integer>(); 
-		this.total = 0; 
-		this.numOfQuestions = 0; 
+		this.totalPoints = 0; 
 		populate(); 
 	}
 	
-	public void populate() { 
-		boolean manualAnswers = false; 
-		int questionValue = 0; 
+	private void populate() { 
+		// takes in user input about the assignment generally
+		title = console.getStrAnswer("Assignment Name:"); 
+		int sections = console.getIntAnswer("How many sections does this assignment have?"); 
 		
-		// allows for the option of dividing all points among the questions evenly 
-		System.out.print("How many points is this assignment worth? ");
-		total = console.nextInt(); 
-		System.out.print("Would you like to distribute points evenly for all questions? (y/n) ");
-		if (console.next().equals("y")) { 
-			manualAnswers = false; 
-			System.out.print("How many questions are there? ");
-			numOfQuestions = console.nextInt(); 
-			questionValue = total/numOfQuestions; 
-			console.nextLine(); // for clearing buffer 
-		} else if (console.next().equals("n")) {
-			manualAnswers = true; 
-		} else {
-			System.out.println("Please try again.");
+		for (int i = 1; i <= sections; i++) {
+			populateSection(Integer.toString(i)); 
 		}
-		
-		// prompts for the user to provide questions
-		int count = 1; 
-		while (count <= numOfQuestions) { 
-			System.out.print("Please enter a question. ");
-			String q = console.nextLine(); 
-			if (manualAnswers) { 
-				System.out.print("How should this question be weighted?"); 
-				questionValue = console.nextInt();
-				total += questionValue; 
-			}
-			count++;
-			questions.put(q, questionValue); 
-		}
+		populateSection("GENERAL"); 
 		
 		// when done populating, updates on what's in storage
 		printState(); 
 	}
 	
-	// prints out details about the assignment 
-	public void printState() { 
-		System.out.println("\nASSIGNMENT");
-		System.out.println(numOfQuestions + " questions");
-		for (Map.Entry<String, Integer> entry : questions.entrySet()) { 
-			System.out.println(entry.getKey() + " | " + entry.getValue() + " points");
+	// breaks the assignment into sections
+	private void populateSection(String name) {
+		int numOfQuestions = 0; 
+		boolean manualAnswers; 
+		
+		System.out.println("SECTION " + name);
+		int sectionTotal = console.getIntAnswer("How many points are possible in this section?"); 
+		totalPoints += sectionTotal; 
+		manualAnswers = !console.getBoolAnswer("Would you like to distribute points evenly across each question in this section?"); 
+		
+		if (name.equals("GENERAL")) { 
+			numOfQuestions = 2; 
+			storeQuestions("Style?", manualAnswers, 1, sectionTotal); 
+			storeQuestions("Comments?", manualAnswers, 1, sectionTotal); 
+			
+		} else { 
+			storeQuestions("Please enter a question.", manualAnswers, numOfQuestions, sectionTotal); 
+		}
+		System.out.println(); 
+	}
+	
+	private void storeQuestions(String prompt, boolean manualAnswers, int numOfQuestions, int sectionTotal) {
+		int questionValue = 0; 
+		if (!manualAnswers) questionValue = sectionTotal/numOfQuestions; 
+		
+		for (int j = 1; j <= numOfQuestions; j++) {
+			String q = console.getStrAnswer(prompt); 
+			if (manualAnswers) {
+				questionValue = console.getIntAnswer("How should this question be weighted?"); 
+				totalPoints += questionValue; 
+			}
+			questions.put(q, questionValue); 
 		}
 	}
 	
+	// prints out details about the assignment 
+	public void printState() { 
+		System.out.println("\nASSIGNMENT");
+		for (Map.Entry<String, Integer> entry : questions.entrySet()) { 
+			System.out.println(entry.getKey() + " | " + entry.getValue() + " points");
+		}
+		System.out.println(); 
+	}
+	
+	// get the title of the assignment 
+	public String getTitle() {
+		return title; 
+	}
+	
 	// get the total number of points possible within the assignment 
-	public int getTotal() {
-		return total; 
+	public int getTotalPoints() {
+		return totalPoints; 
 	}
 }
