@@ -7,6 +7,7 @@ public class Assignment {
 	Console console; 
 	String title; 
 	int totalPoints; 
+	String[] generalGrading = { "Style", "Comments" }; 
 	protected LinkedHashMap<String, Integer> questions; 
 	
 	Assignment(Console console) { 
@@ -40,23 +41,39 @@ public class Assignment {
 		totalPoints += sectionTotal; 
 		manualAnswers = !console.getBoolAnswer("Would you like to distribute points evenly across each question in this section?"); 
 		
-		if (name.equals("GENERAL")) { 
+		if (name.equals("- GENERAL")) { 
 			numOfQuestions = 2; 
-			storeQuestions("Style?", manualAnswers, 1, sectionTotal); 
-			storeQuestions("Comments?", manualAnswers, 1, sectionTotal); 
-			
+			for (int i = 0; i < generalGrading.length; i++) {
+				storeQuestions(generalGrading[i], manualAnswers, 1, sectionTotal, true); 
+			}
 		} else { 
-			storeQuestions("Please enter a question.", manualAnswers, numOfQuestions, sectionTotal); 
+			numOfQuestions = console.getIntAnswer("How many questions are in this section?"); 
+			storeQuestions("Please enter a question.", manualAnswers, numOfQuestions, sectionTotal, false); 
 		}
 		System.out.println(); 
 	}
 	
-	private void storeQuestions(String prompt, boolean manualAnswers, int numOfQuestions, int sectionTotal) {
+	/**
+	 * Stores information on the question and the number of points alloted to that question 
+	 * @param prompt			The string that will prompt the user for the question
+	 * @param manualAnswers		Whether points will be inputed manually or automatically generated 
+	 * @param numOfQuestions	The number of questions in the current section 
+	 * @param sectionTotal		The total number of points possible in the current section 
+	 * @param responseBool		If the response will be a boolean or not
+	 */
+	private void storeQuestions(String prompt, boolean manualAnswers, int numOfQuestions, int sectionTotal, boolean responseBool) {
 		int questionValue = 0; 
+		String q = ""; 
 		if (!manualAnswers) questionValue = sectionTotal/numOfQuestions; 
 		
 		for (int j = 1; j <= numOfQuestions; j++) {
-			String q = console.getStrAnswer(prompt); 
+			if (responseBool) {
+				String includePrompt = String.format("Will this assignment grade %s?", prompt.toLowerCase()); 
+				boolean include = console.getBoolAnswer(includePrompt); 
+				if (include) q = prompt; 
+			} else {
+				q = console.getStrAnswer(prompt); 
+			}
 			if (manualAnswers) {
 				questionValue = console.getIntAnswer("How should this question be weighted?"); 
 				totalPoints += questionValue; 
