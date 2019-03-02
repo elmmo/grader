@@ -22,6 +22,11 @@ public class Console {
 		System.out.print(q + " " + append + " ");
 	}
 	
+//	private <T> boolean typeCheck(String type, T obj) { 
+//		type = "java.lang." + type; 
+//		if (obj instanceof String && type.equals(String.class.toString())) return true; 
+//	}
+	
 	// gets a string user input
 	public String getStrAnswer(String q) { 
 		ask(q); 
