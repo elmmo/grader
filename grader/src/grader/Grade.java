@@ -25,15 +25,21 @@ public class Grade {
 			
 			// lines for this problem, individual to the student 
 			String lines = console.getStrAnswer("What lines does this problem concern?"); 
+			if (lines.equals("")) {
+				lines = entry.getKey(); 
+			}
 			if (!(lines.equals("none"))) { 
 				// grading 
-				String deduction = console.getStrAnswer("How many points do you deduct?"); 
+				String deduction; console.getStrAnswer("How many points do you deduct?"); 
+				do {
+					deduction = console.getStrAnswer("How many points do you deduct?"); 
+				} while (!deduction.contains("Use comment ") && !console.typeCheck(Integer.class, deduction)); 
 				if (deduction.contains("Use comment ")) {
 					references.put(lines, Integer.parseInt(deduction.split("#")[1])); 
 				} else { 
 					String comments = console.getStrAnswer("Comments?"); 
 					// in the case that any points are deducted
-					if (!deduction.equals("0") && !deduction.equals("-")) {
+					if (!deduction.equals("0")) {
 						points -= Integer.parseInt(deduction); 
 						comments = "-" + deduction + " | " + comments; 
 					}

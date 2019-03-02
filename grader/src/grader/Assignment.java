@@ -43,7 +43,7 @@ public class Assignment {
 		manualAnswers = !console.getBoolAnswer("Would you like to distribute points evenly across each question in this section?"); 
 		
 		if (name.equals(GEN_FLAG)) { 
-			numOfQuestions = 2; 
+			numOfQuestions = generalGrading.length; 
 			for (int i = 0; i < generalGrading.length; i++) {
 				storeQuestions(generalGrading[i], manualAnswers, 1, sectionTotal, true, name); 
 			}

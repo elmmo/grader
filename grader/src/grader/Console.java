@@ -22,10 +22,14 @@ public class Console {
 		System.out.print(q + " " + append + " ");
 	}
 	
-//	private <T> boolean typeCheck(String type, T obj) { 
-//		type = "java.lang." + type; 
-//		if (obj instanceof String && type.equals(String.class.toString())) return true; 
-//	}
+	public <T,J> boolean typeCheck(Class<J> type, T obj) { 
+		// accounts for integers passed as strings
+		if (type == Integer.class && obj.getClass() == String.class) {
+			Integer num = Integer.parseInt((String)obj); 
+			return type == num.getClass(); 
+		}
+		return type == obj.getClass(); 
+	}
 	
 	// gets a string user input
 	public String getStrAnswer(String q) { 
@@ -62,10 +66,23 @@ public class Console {
 	
 	// get an int user input 
 	public int getIntAnswer(String q) {
-		ask(q); 
-		int response = scanner.nextInt(); 
-		scanner.nextLine(); // for clearing buffer 
-		return response; 
+		boolean invalid = true; 
+		int result = 0; 
+		do {
+			ask(q); 
+			String response = scanner.nextLine(); 
+			try {
+				if (typeCheck(Integer.class, response)) {
+					result = Integer.parseInt(response); 
+					invalid = false; 
+				} else {
+					System.out.println("This shouldn't print out but we're testing things so if it does, here ya go.");
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Something went wrong. Please try again.");
+			}
+		} while (invalid); 
+		return result;  
 	}
 	
 	// closes the scanner upon destruction of the class
