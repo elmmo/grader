@@ -10,32 +10,39 @@ import java.util.Map;
 
 
 public class Storage {
-	final int CLASS_SIZE = 16; 
+	final int CLASS_SIZE = 20; 
+	final String GRADER = "Eli Min"; 
 	Grade[] grades; 
 	HashMap<Integer, String> comments; 
-	int index; 
+	int commentIndex; 
+	int gradesFilled; 
 	String assignmentTitle; 
 	int assignmentTotal; 
 	
 	Storage() { 
 		grades = new Grade[CLASS_SIZE]; 
 		comments = new HashMap<Integer, String>(); 
+		gradesFilled = 0; 
 	}
 	
-	public void enterGrades(Assignment a, Console c) {
-		assignmentTotal = a.getTotalPoints(); 
-		assignmentTitle = a.getTitle();
-		for (int i = 0; i < grades.length; i++) {
-			grades[i] = new Grade(a, this, c);
-			generateOutput(i); 
-		}
+	public void enterGrades(Assignment assignment, Console console) {
+		assignmentTotal = assignment.getTotalPoints(); 
+		assignmentTitle = assignment.getTitle();
+		boolean next = false; 
+		do {
+			grades[gradesFilled] = new Grade(assignment, this, console); 
+			generateOutput(gradesFilled); 
+			gradesFilled++; 
+			next = console.getBoolAnswer("Would you like to continue grading?"); 
+			if (!next) System.out.println("\nThanks for your work. Goodbye!");
+		} while (next); 
 	}
 	
 	public void generateOutput(int student) { 
 		try { 
 			PrintWriter writer = new PrintWriter("../../Grades/" + assignmentTitle + "-" + grades[student].getUsername(), "UTF-8"); 
 			writer.println(getDate());
-			writer.println("Graded by Eli Min"); 
+			writer.println(String.format("Graded by %s", GRADER)); 
 			LinkedHashMap<String, Integer> map = grades[student].getReferences(); 
 			for (String key : map.keySet()) { 
 				writer.println(key + " | " + comments.get(map.get(key)) + "\n");
@@ -55,9 +62,9 @@ public class Storage {
 	}
 	
 	public int addComment(String comment) {
-		comments.put(index, comment); 
-		index++; 
-		return index-1; 
+		comments.put(commentIndex, comment); 
+		commentIndex++; 
+		return commentIndex-1; 
 	}
 	
 	public void printAllComments() {

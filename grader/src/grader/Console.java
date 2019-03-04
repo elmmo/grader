@@ -57,10 +57,19 @@ public class Console {
 	
 	// get an int user input 
 	public int getIntAnswer(String q) {
-		ask(q); 
-		int response = scanner.nextInt(); 
-		scanner.nextLine(); // for clearing buffer 
-		return response; 
+		boolean invalid = true; 
+		int result = 0; 
+		do {
+			ask(q); 
+			String response = scanner.nextLine(); 
+			try {
+				result = Integer.parseInt(response); 
+				invalid = false; 
+			} catch (NumberFormatException e) {
+				System.out.println("Something went wrong. Please try again.");
+			}
+		} while (invalid); 
+		return result;  
 	}
 	
 	// closes the scanner upon destruction of the class
