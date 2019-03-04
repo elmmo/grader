@@ -34,6 +34,7 @@ public class Storage {
 			generateOutput(gradesFilled); 
 			gradesFilled++; 
 			next = console.getBoolAnswer("Would you like to continue grading?"); 
+			if (!next) System.out.println("\nThanks for your work. Goodbye!");
 		} while (next); 
 	}
 	

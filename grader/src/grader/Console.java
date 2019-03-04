@@ -22,15 +22,6 @@ public class Console {
 		System.out.print(q + " " + append + " ");
 	}
 	
-	public <T,J> boolean typeCheck(Class<J> type, T obj) { 
-		// accounts for integers passed as strings
-		if (type == Integer.class && obj.getClass() == String.class) {
-			Integer num = Integer.parseInt((String)obj); 
-			return type == num.getClass(); 
-		}
-		return type == obj.getClass(); 
-	}
-	
 	// gets a string user input
 	public String getStrAnswer(String q) { 
 		ask(q); 
@@ -72,12 +63,8 @@ public class Console {
 			ask(q); 
 			String response = scanner.nextLine(); 
 			try {
-				if (typeCheck(Integer.class, response)) {
-					result = Integer.parseInt(response); 
-					invalid = false; 
-				} else {
-					System.out.println("This shouldn't print out but we're testing things so if it does, here ya go.");
-				}
+				result = Integer.parseInt(response); 
+				invalid = false; 
 			} catch (NumberFormatException e) {
 				System.out.println("Something went wrong. Please try again.");
 			}
